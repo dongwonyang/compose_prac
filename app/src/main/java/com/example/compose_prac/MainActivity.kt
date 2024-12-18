@@ -1,7 +1,6 @@
 package com.example.compose_prac
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,8 +29,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose_prac.ui.theme.Compose_pracTheme
+import java.lang.Exception
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +62,21 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun UnitConverter(modifier: Modifier = Modifier) {
         val localContext = LocalContext.current
-        val textState = remember { mutableStateOf("") }
+
+//        var inputValue by remember { mutableStateOf("") }
+//        var outputValue by remember { mutableStateOf("") }
+//
+//        var inputUnit by remember { mutableStateOf("Centimeters") }
+//        var outputUnit by remember { mutableStateOf("Meters") }
+//
+//        var inputExpended by remember { mutableStateOf(false) }
+//        var outExpended by remember { mutableStateOf(false) }
+//
+//        val conversionFactors = remember { mutableStateOf<Double>(0.01) }
+
+        val uiState = remember { mutableStateOf<UiState>(UiState()) }
+
+        val unitKindList = UnitKind.values().map { it.toString() }
 
         val marginBottom10dp = Modifier.padding(bottom = 10.dp)
         Column(
@@ -71,36 +87,33 @@ class MainActivity : ComponentActivity() {
             Text(text = "Unit Converter", modifier = marginBottom10dp)
 
             Spacer(modifier = Modifier.height(6.dp))
-            // TextField 사용
             TextField(
-                value = textState.value,
-                onValueChange = { textState.value = it },
-                label = { Text("Enter value") },
+                value = uiState.value.inputValue,
+                onValueChange = { uiState.value = uiState.value.copy(inputValue = it) },
+                label = { Text("TextField") },
                 placeholder = { Text("Value") },
                 modifier = marginBottom10dp
             )
 
-            // BasicTextField 사용
             BasicTextField(
-                value = textState.value,
-                onValueChange = { textState.value = it },
+                value = uiState.value.inputValue,
+                onValueChange = { uiState.value = uiState.value.copy(inputValue = it) },
                 modifier = Modifier
                     .border(1.dp, Color.Gray)
                     .then(marginBottom10dp)
             )
 
-            // OutlinedTextField 사용 (기본 스타일)
             OutlinedTextField(
-                value = textState.value,
-                onValueChange = { textState.value = it },
+                value = uiState.value.inputValue,
+                onValueChange = { uiState.value = uiState.value.copy(inputValue = it) },
                 label = { Text("Outlined") },
+                placeholder = { Text("value") },
                 modifier = marginBottom10dp
             )
 
-            // OutlinedTextField 사용 (아이콘 추가)
             OutlinedTextField(
-                value = textState.value,
-                onValueChange = { textState.value = it },
+                value = uiState.value.inputValue,
+                onValueChange = { uiState.value = uiState.value.copy(inputValue = it) },
                 label = { Text("Customized Outlined") },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                 trailingIcon = { Icon(Icons.Default.Clear, contentDescription = null) },
@@ -109,8 +122,9 @@ class MainActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(6.dp))
             Row {
+                // InputBox
                 Box {
-                    Button(onClick = {}) {
+                    Button(onClick = { uiState.value = uiState.value.copy(inputExpended = true) }) {
                         Text(text = "select")
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
@@ -118,29 +132,23 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    DropdownMenu(expanded = false, onDismissRequest = {}) {
-                        DropdownMenuItem(
-                            text = { Text("Centimeters") },
-                            onClick = {}
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Meters") },
-                            onClick = {}
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Feet") },
-                            onClick = {}
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Milimeters") },
-                            onClick = {}
-                        )
+                    DropdownMenu(
+                        expanded = uiState.value.inputExpended,
+                        onDismissRequest = { uiState.value = uiState.value.copy(inputExpended = false) }
+                    ) {
+                        unitKindList.forEach{
+                            DropdownMenuItem(
+                                text = {Text(it)},
+                                onClick = {}
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
 
+                // OutputBox
                 Box {
-                    Button(onClick = {}) {
+                    Button(onClick = { uiState.value = uiState.value.copy(outputExpended = true) }) {
                         Text(text = "select")
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
@@ -148,23 +156,16 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    DropdownMenu(expanded = false, onDismissRequest = {}) {
-                        DropdownMenuItem(
-                            text = { Text("Centimeters") },
-                            onClick = {}
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Meters") },
-                            onClick = {}
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Feet") },
-                            onClick = {}
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Milimeters") },
-                            onClick = {}
-                        )
+                    DropdownMenu(
+                        expanded = uiState.value.outputExpended,
+                        onDismissRequest = { uiState.value = uiState.value.copy(outputExpended = false) }
+                    ) {
+                        unitKindList.forEach{
+                            DropdownMenuItem(
+                                text = {Text(it)},
+                                onClick = {}
+                            )
+                        }
                     }
                 }
             }
@@ -180,5 +181,17 @@ class MainActivity : ComponentActivity() {
 }
 
 
+enum class UnitKind{
+    Centimeters, Meters, Feet, Milimeters
+}
 
 
+data class UiState(
+    val inputValue: String = "",
+    val outputValue: String = "",
+    val inputUnit: UnitKind = UnitKind.Centimeters,
+    val outputUnit: UnitKind = UnitKind.Meters,
+    val inputExpended: Boolean = false,
+    val outputExpended: Boolean = false,
+    val converterFactors: Double = 0.01
+)
