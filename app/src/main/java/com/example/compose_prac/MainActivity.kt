@@ -1,6 +1,7 @@
 package com.example.compose_prac
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -41,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose_prac.ui.theme.Compose_pracTheme
 import java.lang.Exception
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,9 +79,16 @@ class MainActivity : ComponentActivity() {
 
         val uiState = remember { mutableStateOf<UiState>(UiState()) }
 
-        val unitKindList = UnitKind.values().map { it.toString() }
-
         val marginBottom10dp = Modifier.padding(bottom = 10.dp)
+
+        fun convertUnits() = with(uiState.value) {
+            val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
+            val result = (inputValueDouble * converterFactors * 100.0).roundToInt() / 100.0
+
+            uiState.value = uiState.value.copy(outputValue = result.toString())
+            Toast.makeText(localContext, uiState.value.outputValue, Toast.LENGTH_LONG).show()
+        }
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -124,8 +134,10 @@ class MainActivity : ComponentActivity() {
             Row {
                 // InputBox
                 Box {
-                    Button(onClick = { uiState.value = uiState.value.copy(inputExpended = true) }) {
-                        Text(text = "select")
+                    Button(
+                        onClick = { uiState.value = uiState.value.copy(inputExpended = true) }
+                    ) {
+                        Text(text = uiState.value.inputUnit.toString())
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
                             contentDescription = "ArrowDown"
@@ -134,12 +146,22 @@ class MainActivity : ComponentActivity() {
 
                     DropdownMenu(
                         expanded = uiState.value.inputExpended,
-                        onDismissRequest = { uiState.value = uiState.value.copy(inputExpended = false) }
+                        onDismissRequest = {
+                            uiState.value = uiState.value.copy(inputExpended = false)
+                        }
                     ) {
-                        unitKindList.forEach{
+                        UnitKind.values().forEach {
                             DropdownMenuItem(
-                                text = {Text(it)},
-                                onClick = {}
+                                text = { Text(it.toString()) },
+                                onClick = {
+                                    uiState.value.let { state ->
+                                        uiState.value = uiState.value.copy(
+                                            inputExpended = false,
+                                            inputUnit = it,
+                                            converterFactors = it.unit / state.outputUnit.unit
+                                        )
+                                    }
+                                }
                             )
                         }
                     }
@@ -148,8 +170,10 @@ class MainActivity : ComponentActivity() {
 
                 // OutputBox
                 Box {
-                    Button(onClick = { uiState.value = uiState.value.copy(outputExpended = true) }) {
-                        Text(text = "select")
+                    Button(
+                        onClick = { uiState.value = uiState.value.copy(outputExpended = true) }
+                    ) {
+                        Text(text = uiState.value.outputUnit.toString())
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
                             contentDescription = "ArrowDown"
@@ -158,12 +182,23 @@ class MainActivity : ComponentActivity() {
 
                     DropdownMenu(
                         expanded = uiState.value.outputExpended,
-                        onDismissRequest = { uiState.value = uiState.value.copy(outputExpended = false) }
+                        onDismissRequest = {
+                            uiState.value = uiState.value.copy(outputExpended = false)
+                        }
                     ) {
-                        unitKindList.forEach{
+                        UnitKind.values().forEach {
                             DropdownMenuItem(
-                                text = {Text(it)},
-                                onClick = {}
+                                text = { Text(it.toString()) },
+                                onClick = {
+                                    uiState.value.let { state ->
+                                        uiState.value = uiState.value.copy(
+                                            outputExpended = false,
+                                            outputUnit = it,
+                                            converterFactors = state.inputUnit.unit / it.unit
+                                        )
+                                    }
+                                    convertUnits()
+                                }
                             )
                         }
                     }
@@ -181,8 +216,11 @@ class MainActivity : ComponentActivity() {
 }
 
 
-enum class UnitKind{
-    Centimeters, Meters, Feet, Milimeters
+enum class UnitKind(val unit: Double) {
+    Centimeters(1.0),
+    Meters(100.0),
+    Feet(30.0),
+    Milimeters(0.1)
 }
 
 
