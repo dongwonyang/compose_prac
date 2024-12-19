@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,8 +41,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.compose_prac.ui.theme.Compose_pracTheme
 import java.lang.Exception
 import kotlin.math.roundToInt
@@ -94,7 +101,20 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Unit Converter", modifier = marginBottom10dp)
+            Text(text = "Unit Converter",
+                style = TextStyle(
+                    color = Color.Magenta,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif,
+                    textAlign = TextAlign.Center
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .background(Color.LightGray)
+                    .border(1.dp, Color.Black)
+            )
 
             Spacer(modifier = Modifier.height(6.dp))
             TextField(
