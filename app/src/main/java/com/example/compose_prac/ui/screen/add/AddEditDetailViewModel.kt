@@ -1,17 +1,27 @@
 package com.example.compose_prac.ui.screen.add
 
 import androidx.lifecycle.ViewModel
-import com.example.compose_prac.ui.data.Wish
+import androidx.lifecycle.viewModelScope
+import com.example.compose_prac.local.Wish
+import com.example.compose_prac.local.WishRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddEditDetailViewModel : ViewModel() {
+@HiltViewModel
+class AddEditDetailViewModel @Inject constructor(
+    private val wishRepository: WishRepository
+) : ViewModel() {
     private val _wish = MutableStateFlow<Wish>(Wish())
     val wish = _wish.asStateFlow()
 
-    fun editWish(wish: Wish){
-        _wish.value = wish
+    fun editWish(id: Long) = viewModelScope.launch{
+        wishRepository.getWishById(id)?.let {
+            _wish.value = it
+        }
     }
 
     fun updateTitle(title:String){
@@ -33,4 +43,11 @@ class AddEditDetailViewModel : ViewModel() {
     fun isNotEmpty():Boolean =
         wish.value.title.isNotEmpty() && wish.value.description.isNotEmpty()
 
+    fun updateWish(isSuccess: () -> Unit) = viewModelScope.launch{
+        val wish = wish.value
+        if(wish.id != 0L) wishRepository.update(wish)
+        else wishRepository.insert(wish)
+
+        isSuccess()
+    }
 }
