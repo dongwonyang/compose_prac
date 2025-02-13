@@ -1,4 +1,4 @@
-package com.example.compose_prac.utils
+package com.example.compose_prac.ui.utils
 
 import android.content.Context
 import android.widget.Toast

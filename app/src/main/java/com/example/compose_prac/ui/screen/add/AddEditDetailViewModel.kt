@@ -1,7 +1,7 @@
-package com.example.compose_prac.screen.add
+package com.example.compose_prac.ui.screen.add
 
 import androidx.lifecycle.ViewModel
-import com.example.compose_prac.data.Wish
+import com.example.compose_prac.ui.data.Wish
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

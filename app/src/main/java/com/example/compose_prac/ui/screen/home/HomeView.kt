@@ -1,6 +1,5 @@
-package com.example.compose_prac.screen.home
+package com.example.compose_prac.ui.screen.home
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,10 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.compose_prac.component.AppBarView
-import com.example.compose_prac.data.DummyWish
-import com.example.compose_prac.data.Wish
-import com.example.compose_prac.navigation.Screen
-import com.example.compose_prac.utils.toastButtonClicked
+import com.example.compose_prac.ui.data.DummyWish
+import com.example.compose_prac.ui.data.Wish
+import com.example.compose_prac.ui.navigation.Screen
 
 @Composable
 fun HomeView(

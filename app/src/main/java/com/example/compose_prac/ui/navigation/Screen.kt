@@ -1,4 +1,4 @@
-package com.example.compose_prac.navigation
+package com.example.compose_prac.ui.navigation
 
 sealed class Screen(val route: String) {
     object HomeScreen: Screen("home_screen")

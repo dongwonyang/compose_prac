@@ -1,4 +1,4 @@
-package com.example.compose_prac.data
+package com.example.compose_prac.ui.data
 
 data class Wish(
     val id: Long = 0,
