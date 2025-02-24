@@ -10,6 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.example.compose_prac.ui.Screen.account.AccountView
+import com.example.compose_prac.ui.Screen.browse.BrowseView
+import com.example.compose_prac.ui.Screen.home.HomeView
+import com.example.compose_prac.ui.Screen.library.LibraryView
 import com.example.compose_prac.ui.Screen.main.MainViewModel
 import com.example.compose_prac.ui.Screen.subscription.SubscriptionView
 
@@ -23,6 +26,7 @@ fun Navigation(
         startDestination = Screen.DrawerScreen.Account.route,
         modifier = Modifier.padding(pd)
     ) {
+        // Drawer
         composable(route = Screen.DrawerScreen.Account.route) {
             AccountView()
         }
@@ -30,6 +34,18 @@ fun Navigation(
         composable(route = Screen.DrawerScreen.Subscription.route) {
             SubscriptionView()
         }
+
+        // BottomBar
+        composable(route = Screen.BottomScreen.Home.route) {
+            HomeView()
+        }
+        composable(route = Screen.BottomScreen.Library.route) {
+            LibraryView()
+        }
+        composable(route = Screen.BottomScreen.Browse.route) {
+            BrowseView()
+        }
+
 
     }
 }

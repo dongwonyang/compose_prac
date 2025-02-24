@@ -13,15 +13,6 @@ class MainViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(MainUiState.init())
     val uiState = _uiState.asStateFlow()
 
-
-    fun setScreen(screen: Screen) {
-        _uiState.update { prev ->
-            prev.copy(
-                currentScree = screen
-            )
-        }
-    }
-
     fun setIsDialog(isDialog: Boolean){
         _uiState.update { prev->
             prev.copy(
@@ -30,12 +21,21 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun navigateScreen(navController: NavController, screen: Screen){
+    fun setShowBottomSheet(showBottomSheet: Boolean){
         _uiState.update { prev->
             prev.copy(
-                currentScree = screen
+                showBottomSheet = showBottomSheet
             )
         }
-        navController.navigate(screen.route)
     }
+
+    // 📌 현재 네비게이션 상태를 감지해서 currentScreen을 동기화
+    fun updateCurrentScreen(navController: NavController) {
+        val currentRoute = navController.currentBackStackEntry?.destination?.route
+        currentRoute?.let { route ->
+            val screen = Screen.fromRoute(route) // 🔥 route를 기반으로 Screen을 찾는 함수
+            _uiState.update { prev -> prev.copy(currentScree = screen) }
+        }
+    }
+
 }
